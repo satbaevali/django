@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from django.db.models import QuerySet
 
-from apps.app.models import Genre,Cinema,Hall,Seat,Movie,Show_time,Booking,Payment
+from apps.app.models import Genre,Cinema,Hall,Seat,Movie,Show_time,Booking
 
 class Command(BaseCommand):
     help = "Generate models"
