@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from django.db.models import QuerySet
 
-from apps.models import Genre,Cinema,Hall,Seat,Movie,Show_time,Booking,Payment
+from apps.app.models import Genre,Cinema,Hall,Seat,Movie,Show_time,Booking,Payment
 
 class Command(BaseCommand):
     help = "Generate models"
@@ -200,11 +200,11 @@ class Command(BaseCommand):
     def handle(self, *args:tuple [Any, ...],**kwargs: dict[str, Any])->None:
         start_time:datetime = datetime.now()
         
-        #self.__generate_users(user_count=20)
-        #self.__generate_genre(genre_count=20)
-        #self.__generate_cinema(cinema_count=20)
-        #self.__generate_hall(hall_count=20)
-        #self.__generate_seat(seat_count=20)
+        self.__generate_users(user_count=20)
+        self.__generate_genre(genre_count=20)
+        self.__generate_cinema(cinema_count=20)
+        self.__generate_hall(hall_count=20)
+        self.__generate_seat(seat_count=20)
         self.__generate_show_time(show_time_count=20)
         self.stdout.write(
             "The whole process to generate data took: {} seconds".format(
