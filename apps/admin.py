@@ -21,6 +21,18 @@ class CinemaAdmin(admin.ModelAdmin):
     list_display = ("id", "name", "city", "address")
     search_fields = ("name", "city")
     list_filter = ("city",)
+    fieldsets = (
+        (
+            "Cinema information",
+            {
+                "fields":(
+                    "name",
+                    "address",
+                    "city",
+                )
+            }
+        ),
+    )
 
 
 @admin.register(Hall)
