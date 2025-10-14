@@ -53,8 +53,8 @@ class Movie(models.Model):
 class Show_time(models.Model):
     movie = models.ForeignKey(Movie,on_delete=models.CASCADE,related_name='show_times')
     hall = models.ForeignKey(Hall,on_delete=models.CASCADE,related_name='show_times')
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
+    start_time = models.TimeField()
+    end_time = models.TimeField()
     price = models.DecimalField(max_digits=6,decimal_places=2)
 
 

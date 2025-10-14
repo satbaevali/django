@@ -1,5 +1,5 @@
 from typing import Any
-from random import choice,choices, randint
+from random import choice,choices, randint, uniform
 from datetime import datetime, time,timedelta
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
@@ -156,7 +156,39 @@ class Command(BaseCommand):
                 f"Created {seat_after - seat_before } seat"
             )
         )
-            
+    def __generate_movie(self,movie_count = 20)->None:
+        create_movie:list[Movie] = []
+        exited_genre:QuerySet[Genre] = Genre.objects.all()
+        movie_before:int = Movie.objects.count()
+        LANGUAGE = ("KZ","RU","EN")
+        
+        i:int
+        for i in range(movie_count):
+            title = " ".join(choices(self.SOME_WORDS, k=3)).capitalize()    
+            description =" ".join(choices(self.SOME_WORDS, k=7)).capitalize()
+            language = choice(LANGUAGE)
+            rating = round(uniform(1.0,5.0),2)
+            create_movie.append(
+                Movie(
+                    title = title,
+                    description =description,
+                    duration = randint(50,150),
+                    language = language,
+                    rating = rating,
+                )
+            )
+             
+        
+        Movie.objects.bulk_create(create_movie,ignore_conflicts=True)
+        all_movies:QuerySet[Movie] = Movie.objects.all()[movie_before:]
+        
+        for movie in all_movies:
+            genres_to_add = choices(exited_genre, k=randint(1, 3)) 
+            movie.genre.set(genres_to_add)
+        
+        movie_after:int = Movie.objects.count()
+        
+        self.stdout.write(self.style.SUCCESS(f"Created {movie_after - movie_before} movies and assigned genres."))     
     
     def __generate_show_time(self,show_time_count = 20)->None:
         create_show_time:list[Show_time] = []
@@ -184,11 +216,12 @@ class Command(BaseCommand):
                     hall = hall,
                     start_time = start_t,
                     end_time = end_t ,
-                    price = f"{randint(2000,5000)}tg"
+                    price = randint(2000,5000)
                 )
             )
-        show_after:int = Show_time.objects.count()
+        
         Show_time.objects.bulk_create(create_show_time,ignore_conflicts=True)
+        show_after:int = Show_time.objects.count()
         self.stdout.write(
             self.style.SUCCESS(
                 f"Created {show_after - show_before } show_time"
@@ -206,6 +239,7 @@ class Command(BaseCommand):
         #self.__generate_hall(hall_count=20)
         #self.__generate_seat(seat_count=20)
         self.__generate_show_time(show_time_count=20)
+        #self.__generate_movie(movie_count=20)
         self.stdout.write(
             "The whole process to generate data took: {} seconds".format(
                     (datetime.now() - start_time).total_seconds()
