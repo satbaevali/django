@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, Genre, Cinema, Hall, Seat, Movie, Show_time, Booking, Payment
+from .models import User, Genre, Cinema, Hall, Seat, Movie, Show_time, Booking
 
 # User model
 @admin.register(User)
@@ -44,8 +44,3 @@ class ShowTimeAdmin(admin.ModelAdmin):
 class BookingAdmin(admin.ModelAdmin):
     list_display = ("id", "user_id", "show_time", "seats", "status")
 
-# Payment model
-@admin.register(Payment)
-class PaymentAdmin(admin.ModelAdmin):
-    list_display = ("id", "booking", "amount", "payment_method", "status")
-    

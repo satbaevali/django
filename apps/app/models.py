@@ -82,8 +82,3 @@ class Booking(models.Model):
     def __str__(self):
         return f"Booking by {self.user_id.name} for {self.show_time.movie.title} at {self.show_time.start_time}"
 
-# Payment for a booking with method and status
-class Payment(models.Model):
-    booking = models.ForeignKey(Booking, on_delete=models.CASCADE, related_name='payments')
-    amount = models.DecimalField(max_digits=6, decimal_places=2)
-    payment_time = models.DateTimeField(auto_now_add=True)
