@@ -1,5 +1,5 @@
 from django.db import models
-
+from apps.abstracts.models import AbstractBaseModel
 # User model for app users with contact info
 class User(models.Model):
     name = models.CharField(max_length=100, blank=True)
@@ -18,7 +18,7 @@ class Genre(models.Model):
         return self.name
 
 # Cinema with name, address, and city
-class Cinema(models.Model):
+class Cinema(AbstractBaseModel):
     name = models.CharField(max_length=100, unique=True)
     address = models.CharField(max_length=100, blank=True)
     city = models.CharField(max_length=100, blank=True)
@@ -45,7 +45,7 @@ class Seat(models.Model):
         return f"Row {self.row}, Seat {self.number} - {self.hall.name}"
 
 # Movie with genre, duration, language, and rating
-class Movie(models.Model):
+class Movie(AbstractBaseModel):
     title = models.CharField(max_length=100, unique=True)
     genre = models.ManyToManyField(Genre, related_name='movies')
     description = models.TextField(blank=True)

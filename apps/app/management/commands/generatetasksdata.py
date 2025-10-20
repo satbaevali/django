@@ -2,11 +2,11 @@ from typing import Any
 from random import choice,choices, randint, uniform
 from datetime import datetime, time,timedelta
 from django.core.management.base import BaseCommand
-from django.contrib.auth.models import User
+#from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from django.db.models import QuerySet
 
-from apps.app.models import Genre,Cinema,Hall,Seat,Movie,Show_time,Booking
+from apps.app.models import Genre,Cinema,Hall,Seat,Movie,Show_time,Booking,User
 
 class Command(BaseCommand):
     help = "Generate models"
@@ -44,11 +44,11 @@ class Command(BaseCommand):
         
         i:int
         for i in range(user_count):
-            username:str = f"user{i+1}"
+            name:str = f"user{i+1}"
             email: str = f"user{i+1}@{choice(self.EMAIL_DOMAINS)}"
             created_user.append(
                 User(
-                    username = username,
+                    name = name,
                     email = email,
                     password = USER_PASSWORD
                 )
@@ -227,6 +227,40 @@ class Command(BaseCommand):
                 f"Created {show_after - show_before } show_time"
             )
         )
+    
+    def __generate_booking(self,book_count = 20)->None:
+        create_booking :list[Booking] = []
+        
+        exited_user_id:QuerySet[User] = User.objects.all()
+        exited_show_time:QuerySet[Show_time] = Show_time.objects.all()
+        exited_seat:QuerySet[Seat] = Seat.objects.all()
+        booking_before : int=Booking.objects.count()
+        
+        i:int
+        for i in range(book_count):
+            user_id:User=choice(exited_user_id)
+            show_time:Show_time=choice(exited_show_time)
+            seats:Seat = choice(exited_seat)
+            start_h = randint(4,12)
+            start_m = choice([0,15,30,45])
+            booking_time = time(start_h,start_m)
+            status = ('pending','confirmed','canceled')
+            create_booking.append(
+                Booking(
+                    user_id=user_id,
+                    show_time = show_time,
+                    seats = seats,
+                    booking_time = booking_time,
+                    status = choice(status)
+                )
+            )         
+        Booking.objects.bulk_create(create_booking,ignore_conflicts=True)
+        booking_after : int=Booking.objects.count()
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"Created {booking_after - booking_before } booking"
+            )
+        )
             
         
     
@@ -234,12 +268,13 @@ class Command(BaseCommand):
         start_time:datetime = datetime.now()
         
         self.__generate_users(user_count=20)
-        self.__generate_genre(genre_count=20)
-        self.__generate_cinema(cinema_count=20)
-        self.__generate_hall(hall_count=20)
-        self.__generate_seat(seat_count=20)
-        self.__generate_show_time(show_time_count=20)
+        #self.__generate_genre(genre_count=20)
+        #self.__generate_cinema(cinema_count=20)
+        #self.__generate_hall(hall_count=20)
+        #self.__generate_seat(seat_count=20)
+        #self.__generate_show_time(show_time_count=20)
         #self.__generate_movie(movie_count=20)
+        self.__generate_booking(book_count=20)
         self.stdout.write(
             "The whole process to generate data took: {} seconds".format(
                     (datetime.now() - start_time).total_seconds()

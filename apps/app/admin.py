@@ -15,8 +15,13 @@ class GenreAdmin(admin.ModelAdmin):
 # Cinema model
 @admin.register(Cinema)
 class CinemaAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "city", "address")
+    list_display = ("id", "name", "city", "address","created_at")
     list_filter = ("city",)
+    readonly_fields = (
+        "created_at",
+        "updated_at",
+        "deleted_at"
+    )
 
 # Hall model
 @admin.register(Hall)
@@ -31,8 +36,13 @@ class SeatAdmin(admin.ModelAdmin):
 # Movie model
 @admin.register(Movie)
 class MovieAdmin(admin.ModelAdmin):
-    list_display = ("id", "title", "duration", "language", "rating")
+    list_display = ("id", "title", "duration", "language", "rating","created_at")
     filter_horizontal = ("genre",)
+    readonly_fields = (
+        "created_at",
+        "updated_at",
+        "deleted_at"
+    )
 
 # Show_time model
 @admin.register(Show_time)
