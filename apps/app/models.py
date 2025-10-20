@@ -1,5 +1,4 @@
 from django.db import models
-from apps.abstracts.models import AbstractBaseModel
 
 # User model for app users with contact info
 class User(models.Model):
@@ -19,7 +18,7 @@ class Genre(models.Model):
         return self.name
 
 # Cinema with name, address, and city
-class Cinema(AbstractBaseModel):
+class Cinema(models.Model):
     name = models.CharField(max_length=100, unique=True)
     address = models.CharField(max_length=100, blank=True)
     city = models.CharField(max_length=100, blank=True)
@@ -83,6 +82,3 @@ class Booking(models.Model):
     def __str__(self):
         return f"Booking by {self.user_id.name} for {self.show_time.movie.title} at {self.show_time.start_time}"
 
-# Payment for a booking with method and status
-#class Payment(models.Model):
-    

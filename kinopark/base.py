@@ -1,5 +1,7 @@
 import os
 
+from django.urls import reverse_lazy
+
 # Project modules
 from kinopark.conf import *  # noqa: F403
 
@@ -24,11 +26,11 @@ DJANGO_AND_THIRD_PARTY_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
+    
 ]
 PROJECT_APPS = [
     "apps.app.apps.AppsConfig",
-    "apps.login.apps.LoginConfig",
-    "apps.abstracts.apps.AbstractsConfig",
+    "users.apps.UsersConfig",
     
 ]
 INSTALLED_APPS = DJANGO_AND_THIRD_PARTY_APPS + PROJECT_APPS
@@ -45,10 +47,11 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -93,3 +96,16 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+UNFOLD = {
+    "SITE_TITLE": "My Admin Dashboard",
+    "SITE_HEADER": "Admin Panel",
+    "SHOW_HISTORY": True,
+    "DARK_MODE": True,
+    "SIDEBAR": {
+        "show_search": True,
+        "show_all_applications": True,
+    },
+}
+LOGIN_REDIRECT_URL = "users:home"
+LOGOUT_REDIRECT_URL = "users:login"
+LOGIN_URL = reverse_lazy("users:login")

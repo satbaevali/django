@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from kinopark.apps.app.models import (
-    User, Genre, Cinema, Hall, Seat, Movie, Show_time, Booking, Payment
+    User, Genre, Cinema, Hall, Seat, Movie, Show_time, Booking
 )
 
 # Serialize app users
@@ -88,13 +88,3 @@ class BookingSerializer(serializers.ModelSerializer):
         model = Booking
         fields = ['id', 'booking_time', 'status', 'user', 'user__id', 'show_time', 'show_time__id', 'seat', 'seat__id']
 
-# Serialize payments with booking info
-class PaymentSerializer(serializers.ModelSerializer):
-    booking = BookingSerializer(read_only=True)
-    booking__id = serializers.PrimaryKeyRelatedField(
-        queryset=Booking.objects.all(), source='booking', write_only=True
-    )
-
-    class Meta:
-        model = Payment
-        fields = ['id', 'amount', 'payment_time', 'status', 'booking', 'booking__id', 'payment_method']

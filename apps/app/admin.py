@@ -15,37 +15,8 @@ class GenreAdmin(admin.ModelAdmin):
 # Cinema model
 @admin.register(Cinema)
 class CinemaAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "city", "address","created_at")
+    list_display = ("id", "name", "city", "address")
     list_filter = ("city",)
-    list_editable = ("name",)
-    fieldsets = (
-        (
-            "Cinema Information",
-            {
-                "fields": (
-                    "name",
-                    "city",
-                    "address",
-                )
-            }
-        ),
-        (
-            "Date and Time Information",
-            {
-                "fields": (
-                    "created_at",
-                    "updated_at",
-                    "deleted_at",
-                )
-            }
-        )
-    )
-    readonly_fields = (
-        "created_at",
-        "updated_at",
-        "deleted_at",
-    )
-    
 
 # Hall model
 @admin.register(Hall)
@@ -73,8 +44,3 @@ class ShowTimeAdmin(admin.ModelAdmin):
 class BookingAdmin(admin.ModelAdmin):
     list_display = ("id", "user_id", "show_time", "seats", "status")
 
-# Payment model
-#@admin.register(Payment)
-class PaymentAdmin(admin.ModelAdmin):
-    list_display = ("id", "booking", "amount", "payment_method", "status")
-    
