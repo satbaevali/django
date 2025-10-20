@@ -16,6 +16,7 @@ ASGI_APPLICATION = "kinopark.asgi.application"
 # Apps
 #
 DJANGO_AND_THIRD_PARTY_APPS = [
+    'unfold',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
