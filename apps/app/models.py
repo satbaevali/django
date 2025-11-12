@@ -49,7 +49,7 @@ class Seat(models.Model):
         return f"Row {self.row}, Seat {self.number} - {self.hall.name}"
 
 # Movie with genre, duration, language, and rating
-class Movie(AbstractBaseModel):
+class Movie(models.Model):
     title = models.CharField(max_length=100, unique=True)
     genre = models.ManyToManyField(Genre, related_name='movies')
     rating = models.FloatField(blank=True, null=True)

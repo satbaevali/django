@@ -15,15 +15,21 @@ class GenreAdmin(admin.ModelAdmin):
 # Cinema model
 @admin.register(Cinema)
 class CinemaAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "city", "address","created_at","updated_at")
-    list_filter = ("city",)
-    readonly_fields = (
-        "created_at",
-        "updated_at",
-        "deleted_at"
-    )
     list_display = ("id", "name", "city", "address")
     list_filter = ("city",)
+    list_editable = ("name",)
+    fieldsets = (
+        (
+            "Cinema Information",
+            {
+                "fields": (
+                    "name",
+                    "city",
+                    "address",
+                )
+            }
+        ),
+    )
 
 
 # Hall model

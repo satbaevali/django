@@ -2,11 +2,12 @@ from typing import Any
 from random import choice,choices, randint, uniform
 from datetime import datetime, time,timedelta
 from django.core.management.base import BaseCommand
-#from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from django.db.models import QuerySet
 
-from apps.app.models import Genre,Cinema,Hall,Seat,Movie,Show_time,Booking,User
+
+from apps.app.models import Genre,Cinema,Hall,Seat,Movie,Show_time,Booking
+from apps.auths.models import CustomUser
 
 class Command(BaseCommand):
     help = "Generate models"
@@ -106,22 +107,22 @@ class Command(BaseCommand):
     
     def __generate_users(self,user_count = 20)->None:
         USER_PASSWORD = make_password("12345")
-        created_user:list[User] = []
-        user_before : int = User.objects.count()
+        created_user:list[CustomUser] = []
+        user_before : int = CustomUser.objects.count()
         
         i:int
         for i in range(user_count):
-            name:str = f"user{i+1}"
+            full_name:str = f"user{i+1}"
             email: str = f"user{i+1}@{choice(self.EMAIL_DOMAINS)}"
             created_user.append(
-                User(
-                    name = name,
+                CustomUser(
+                    full_name = full_name,
                     email = email,
                     password = USER_PASSWORD
                 )
             )
-        User.objects.bulk_create(created_user,ignore_conflicts=True)
-        user_after:int = User.objects.count()
+        CustomUser.objects.bulk_create(created_user,ignore_conflicts=True)
+        user_after:int = CustomUser.objects.count()
         
         self.stdout.write(
             self.style.SUCCESS(
@@ -303,14 +304,14 @@ class Command(BaseCommand):
     def __generate_booking(self,book_count = 20)->None:
         create_booking :list[Booking] = []
         
-        exited_user_id:QuerySet[User] = User.objects.all()
+        exited_user_id:QuerySet[CustomUser] = CustomUser.objects.all()
         exited_show_time:QuerySet[Show_time] = Show_time.objects.all()
         exited_seat:QuerySet[Seat] = Seat.objects.all()
         booking_before : int=Booking.objects.count()
         
         i:int
         for i in range(book_count):
-            user_id:User=choice(exited_user_id)
+            user_id:CustomUser=choice(exited_user_id)
             show_time:Show_time=choice(exited_show_time)
             seats:Seat = choice(exited_seat)
             start_h = randint(4,12)
@@ -339,12 +340,12 @@ class Command(BaseCommand):
     def handle(self, *args:tuple [Any, ...],**kwargs: dict[str, Any])->None:
         start_time:datetime = datetime.now()
         
-        
-        #self.__generate_genre(genre_count=20)
-        #self.__generate_cinema(cinema_count=20)
-        #self.__generate_hall(hall_count=20)
-        #self.__generate_seat(seat_count=20)
-        #self.__generate_show_time(show_time_count=20)
+        #self.__generate_users(user_count=20)
+        self.__generate_genre(genre_count=20)
+        self.__generate_cinema(cinema_count=20)
+        self.__generate_hall(hall_count=20)
+        self.__generate_seat(seat_count=20)
+        self.__generate_show_time(show_time_count=20)
         self.__generate_movie(movie_count=20)
         #self.__generate_booking(book_count=20)
         self.stdout.write(
