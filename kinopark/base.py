@@ -13,6 +13,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ROOT_URLCONF = 'kinopark.urls'
 WSGI_APPLICATION = 'kinopark.wsgi.application'
 ASGI_APPLICATION = "kinopark.asgi.application"
+AUTH_USER_MODEL = "auths.CustomUser"
 
 # ----------------------------------------------
 # Apps
@@ -32,6 +33,7 @@ PROJECT_APPS = [
     "apps.app.apps.AppsConfig",
     "users.apps.UsersConfig",
     "apps.abstracts.apps.AbstractsConfig",
+    "apps.auths.apps.AuthsConfig"
     
 ]
 INSTALLED_APPS = DJANGO_AND_THIRD_PARTY_APPS + PROJECT_APPS

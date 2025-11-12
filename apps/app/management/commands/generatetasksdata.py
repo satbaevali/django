@@ -24,17 +24,84 @@ class Command(BaseCommand):
         "consectetur",
         "adipiscing",
         "elit",
-        "sed",
-        "do",
-        "eiusmod",
-        "tempor",
-        "incididunt",
-        "ut",
-        "labore",
-        "et",
-        "dolore",
-        "magna",
-        "aliqua",
+    )
+    GENRE_WORDS = (
+        "Драма",
+        "Комедия",
+        "Фантастика",
+        "Экшн",
+        "Мелодрама",
+        "Детектив",
+    )
+    CINEMA_WORDS =(
+        "Kinopark",
+        "Chaplin",
+        "Arman Cinema",
+        "Kinoplexx",
+        "Kinostar",
+        "Saryarka Cinema",
+        "Cinema Towers",
+        "Silkway Cinema",
+        "Cinema City",
+        "Altyn Arna Cinema",
+        "Nomad Cinema",
+        "Qazaqfilm Hall",
+        "Mega Cinema",
+        "Premium Cinema",
+    )
+    CITY_WORDS = (
+        "Алматы",
+        "Астана",
+        "Шымкент",
+        "Қарағанды",
+        "Атырау",
+        "Ақтөбе",
+        "Павлодар",
+        "Өскемен",
+        "Қостанай"
+    )
+    HALL_WORDS = (
+        "Hall 1",
+        "Hall 2",
+        "Hall 3",
+        "Hall 4",
+        "Hall 5",
+        "VIP Hall",
+        "Premium Hall",
+        "IMAX Hall",
+        "Dolby Atmos Hall",
+        "LUXE Hall",
+        "3D Hall",
+        "4DX Hall",
+        "Gold Hall",
+        "Silver Hall",
+        "Family Hall",
+        "Comfort Hall",
+    )
+    MOVIE_WORDS = (
+        "Томирис",
+        "Бизнес по-казахски",
+        "Келін",
+        "Жаужүрек мың бала",
+        "Махаббат. Жек көру",
+        "Көксерек",
+        "Анаға апарар жол",
+        "Шал",
+        "Қыз Жібек",
+        "Елбасы жолы",
+        "Зауал",
+        "Бекзат",
+        "Ана жүрегі",
+    )
+    SOME_DESCRIPTIONS = (
+        "Фильм о смелости, любви и верности. Главный герой борется за свою мечту.",
+        "Добрая и трогательная история о настоящей дружбе и человеческих ценностях.",
+        "Захватывающая история, наполненная опасностями и неожиданными поворотами.",
+        "Основано на реальных событиях. Фильм рассказывает о силе духа и преодолении трудностей.",
+        "Эта история о любви, которая проходит через испытания и расстояние.",
+        "Фильм о жизни в большом городе и сложных отношениях между людьми.",
+        "Драма о выборе между честью и личным счастьем.",
+        "Фантастическая история о будущем человечества и его судьбе."
     )
     
     def __generate_users(self,user_count = 20)->None:
@@ -68,7 +135,7 @@ class Command(BaseCommand):
         
         a:int 
         for a in range(genre_count):
-            name = " ".join(choices(self.SOME_WORDS, k=3)).capitalize()
+            name = " ".join(choices(self.GENRE_WORDS, k=1)).capitalize()
             create_genre.append(
                 Genre(
                     name = name
@@ -89,9 +156,9 @@ class Command(BaseCommand):
         
         i:int 
         for i in range(cinema_count):
-            name = " ".join(choices(self.SOME_WORDS,k=3)).capitalize()
+            name = " ".join(choices(self.CINEMA_WORDS,k=1)).capitalize()
             address = " ".join(choices(self.SOME_WORDS, k=4)).capitalize()
-            city = " ".join(choices(self.SOME_WORDS,k=3)).capitalize()
+            city = " ".join(choices(self.CITY_WORDS,k=1)).capitalize()
             create_cinema.append(
                 Cinema(
                     name = name,
@@ -117,7 +184,7 @@ class Command(BaseCommand):
         i:int
         for i in range(hall_count):
             cinema : Cinema = choice(exited_cinema)
-            name = " ".join(choices(self.SOME_WORDS,k=3)).capitalize()
+            name = " ".join(choices(self.HALL_WORDS,k=1)).capitalize()
             create_hall.append(
                 Hall(
                     cinema=cinema,
@@ -161,18 +228,19 @@ class Command(BaseCommand):
         exited_genre:QuerySet[Genre] = Genre.objects.all()
         movie_before:int = Movie.objects.count()
         LANGUAGE = ("KZ","RU","EN")
+        duration = randint(50,150)
         
         i:int
         for i in range(movie_count):
-            title = " ".join(choices(self.SOME_WORDS, k=3)).capitalize()    
-            description =" ".join(choices(self.SOME_WORDS, k=7)).capitalize()
+            title = " ".join(choices(self.MOVIE_WORDS, k=1)).capitalize()    
+            description =" ".join(choices(self.SOME_DESCRIPTIONS)).capitalize()
             language = choice(LANGUAGE)
             rating = round(uniform(1.0,5.0),2)
             create_movie.append(
                 Movie(
                     title = title,
                     description =description,
-                    duration = randint(50,150),
+                    duration = duration,
                     language = language,
                     rating = rating,
                 )
@@ -203,13 +271,17 @@ class Command(BaseCommand):
         for i in range(show_time_count):
             movie:Movie = choice(exited_movie)
             hall: Hall = choice(exited_hall)
-            start_hour = randint(4,12)
+            start_hour = randint(12,23)
             start_minute = choice([0,15,30,45])
-            end_hour = randint(start_hour + 4 ,20)
             
-            start_t = time(start_hour,start_minute)
-            end_t = time(end_hour,0)
-            
+            if start_hour >= 22:
+                end_hour = randint(0, 2)
+            else:
+                end_hour = randint(start_hour + 1, min(start_hour + 4, 23))
+
+            start_t = time(start_hour % 24, start_minute)
+            end_t = time(end_hour % 24, 0)
+                        
             create_show_time.append(
                 Show_time(
                     movie = movie,
@@ -267,14 +339,14 @@ class Command(BaseCommand):
     def handle(self, *args:tuple [Any, ...],**kwargs: dict[str, Any])->None:
         start_time:datetime = datetime.now()
         
-        self.__generate_users(user_count=20)
+        
         #self.__generate_genre(genre_count=20)
         #self.__generate_cinema(cinema_count=20)
         #self.__generate_hall(hall_count=20)
         #self.__generate_seat(seat_count=20)
         #self.__generate_show_time(show_time_count=20)
-        #self.__generate_movie(movie_count=20)
-        self.__generate_booking(book_count=20)
+        self.__generate_movie(movie_count=20)
+        #self.__generate_booking(book_count=20)
         self.stdout.write(
             "The whole process to generate data took: {} seconds".format(
                     (datetime.now() - start_time).total_seconds()

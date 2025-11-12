@@ -48,14 +48,16 @@ class Seat(models.Model):
 class Movie(AbstractBaseModel):
     title = models.CharField(max_length=100, unique=True)
     genre = models.ManyToManyField(Genre, related_name='movies')
-    description = models.TextField(blank=True)
-    duration = models.IntegerField(help_text="Duration in minutes")
-    language = models.CharField(max_length=50, blank=True)
     rating = models.FloatField(blank=True, null=True)
+    duration = models.IntegerField(help_text="Duration in minutes")
+    description = models.TextField(blank=True)
+    
+    language = models.CharField(max_length=50, blank=True)
+    
 
     def __str__(self):
         return self.title
-
+    
 # Show time for a movie in a hall with price
 class Show_time(models.Model):
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name='show_times')
