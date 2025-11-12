@@ -22,6 +22,9 @@ class CinemaAdmin(admin.ModelAdmin):
         "updated_at",
         "deleted_at"
     )
+    list_display = ("id", "name", "city", "address")
+    list_filter = ("city",)
+
 
 # Hall model
 @admin.register(Hall)
