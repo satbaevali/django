@@ -15,6 +15,7 @@ from .models import CustomUser
 
 
 class RegisterView(ViewSet):
+    permission_classes = [permissions.AllowAny]
     def create(self,request):
         serializer = RegisterSerializer(data = request.data)
         if serializer.is_valid(raise_exception=True):
@@ -47,7 +48,13 @@ class LoginView(ViewSet):
         
         
 class UserProfileView(ViewSet):
+    permission_classes = [permissions.IsAuthenticated]
     def list(self,request):
         users = CustomUser.objects.all()
         serializer = UserProfileSerializer(users,many=True)
         return Response(serializer.data,status=status.HTTP_202_ACCEPTED)
+    
+    def retrieve(self,request,pk=None):
+        user = CustomUser.objects.get(pk = pk)
+        serializer = UserProfileSerializer(user)
+        return Response(serializer.data)

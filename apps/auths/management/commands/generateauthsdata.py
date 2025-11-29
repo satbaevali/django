@@ -31,7 +31,7 @@ class Command(BaseCommand):
         i:int
         for i in range(user_count):
             full_name:str= " ".join(choices(self.FULLNAME, k=2))
-            email:str = f"{full_name}@{choices(self.EMAIL_DOMAIN)}"
+            email:str = f"{full_name}@{choice(self.EMAIL_DOMAIN)}"
             create_user.append(
                 CustomUser(
                     full_name = full_name,
