@@ -1,75 +1,83 @@
 from rest_framework import serializers
-from kinopark.apps.app.models import (
-    User, Genre, Cinema, Hall, Seat, Movie, Show_time, Booking
+from apps.app.models import (
+    Genre, Cinema, Hall, Seat, Movie, Showtime
 )
 
-# Serialize app users
+""" # Serialize app users
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = '__all__'
-
+ """
 # Serialize movie genres
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
         fields = '__all__'
 
-# Serialize cinemas
+# Serialize cinemas, halls, seats, and movies
 class CinemaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cinema
-        fields = '__all__'
+        fields = ['id', 'name', 'city', 'address']
 
-# Serialize halls with cinema info
 class HallSerializer(serializers.ModelSerializer):
+    # READ: Full cinema object
     cinema = CinemaSerializer(read_only=True)
-    cinema__id = serializers.PrimaryKeyRelatedField(
+    # WRITE: Accept only ID (cinema_id)
+    cinema_id = serializers.PrimaryKeyRelatedField(
         queryset=Cinema.objects.all(), source='cinema', write_only=True
     )
 
     class Meta:
         model = Hall
-        fields = ['id', 'name', 'total_seats', 'cinema', 'cinema__id']
+        # Use cinema_id instead of cinema__id (cleaner this way)
+        fields = ['id', 'name', 'total_seats', 'cinema', 'cinema_id']
 
-# Serialize seats with hall info
 class SeatSerializer(serializers.ModelSerializer):
-    hall = HallSerializer(read_only=True)
-    hall__id = serializers.PrimaryKeyRelatedField(
+    # For the list of seats, the full hall object is often not needed, but if needed - keep it
+    hall_id = serializers.PrimaryKeyRelatedField(
         queryset=Hall.objects.all(), source='hall', write_only=True
     )
 
     class Meta:
         model = Seat
-        fields = ['id', 'row', 'number', 'hall', 'hall__id']
+        fields = ['id', 'row', 'number', 'hall_id'] # Hall read_only убрал для скорости, ID обычно хватает
 
-# Serialize movies with genres
 class MovieSerializer(serializers.ModelSerializer):
-    genre = GenreSerializer(many=True, read_only=True)
-    genre__id = serializers.PrimaryKeyRelatedField(
+    # READ: List of genres with names
+    genres = GenreSerializer(many=True, read_only=True)
+    # WRITE: List of genre IDs [1, 2, 5]
+    genre_ids = serializers.PrimaryKeyRelatedField(
         queryset=Genre.objects.all(), source='genre', many=True, write_only=True
     )
 
     class Meta:
         model = Movie
-        fields = ['id', 'title', 'description', 'duration', 'language', 'rating', 'genre', 'genre__id']
+        fields = ['id', 'title', 'description', 'duration', 'language', 'rating', 'poster', 'genres', 'genre_ids']
 
-# Serialize show times with movie and hall info
-class ShowTimeSerializer(serializers.ModelSerializer):
+# -----------------------------
+# 2. SCHEDULE SERIALIZERS (Твоя часть)
+# -----------------------------
+
+class ShowtimeSerializer(serializers.ModelSerializer):
+    # READ: Полные объекты
     hall = HallSerializer(read_only=True)
-    hall__id = serializers.PrimaryKeyRelatedField(
+    movie = MovieSerializer(read_only=True)
+    
+    # WRITE: Только ID
+    hall_id = serializers.PrimaryKeyRelatedField(
         queryset=Hall.objects.all(), source='hall', write_only=True
     )
-    movie = MovieSerializer(read_only=True)
-    movie__id = serializers.PrimaryKeyRelatedField(
+    movie_id = serializers.PrimaryKeyRelatedField(
         queryset=Movie.objects.all(), source='movie', write_only=True
     )
 
     class Meta:
-        model = Show_time
-        fields = ['id', 'start_time', 'end_time', 'price', 'hall', 'hall__id', 'movie', 'movie__id']
+        model = Showtime
+        fields = ['id', 'start_time', 'end_time', 'price', 'hall', 'hall_id', 'movie', 'movie_id']
 
-# Serialize bookings with user, show_time, and seat info
+""" # Serialize bookings with user, show_time, and seat info
 class BookingSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     user__id = serializers.PrimaryKeyRelatedField(
@@ -88,3 +96,4 @@ class BookingSerializer(serializers.ModelSerializer):
         model = Booking
         fields = ['id', 'booking_time', 'status', 'user', 'user__id', 'show_time', 'show_time__id', 'seat', 'seat__id']
 
+ """
