@@ -65,7 +65,7 @@ class ShowtimeSerializer(serializers.ModelSerializer):
     hall = HallSerializer(read_only=True)
     movie = MovieSerializer(read_only=True)
     
-    # WRITE: Только ID
+    # WRITE: Только IDы
     hall_id = serializers.PrimaryKeyRelatedField(
         queryset=Hall.objects.all(), source='hall', write_only=True
     )

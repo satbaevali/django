@@ -15,6 +15,7 @@ from .models import CustomUser
 
 
 class RegisterView(ViewSet):
+    """Register View"""
     permission_classes = [permissions.AllowAny]
     def create(self,request):
         serializer = RegisterSerializer(data = request.data)
