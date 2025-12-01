@@ -67,3 +67,30 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainSlidingSerializer",
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
 }
+
+
+# ----------------------------------------------
+# DRF Spectacular
+#
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Authentication API',
+    'DESCRIPTION': 'Complete Authentication API with JWT tokens',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'SCHEMA_PATH_PREFIX': '/api/v1',
+    'COMPONENT_SPLIT_REQUEST': True,
+    'SWAGGER_UI_SETTINGS': {
+        'deepLinking': True,
+        'persistAuthorization': True,
+        'displayOperationId': True,
+        'defaultModelsExpandDepth': 2,
+        'defaultModelExpandDepth': 2,
+        'docExpansion': 'list',
+        'filter': True,
+    },
+    'TAGS': [
+        {'name': 'Authentication', 'description': 'User authentication and token management'},
+        {'name': 'Users', 'description': 'User profile management and settings'},
+    ],
+}
