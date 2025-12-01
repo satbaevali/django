@@ -1,7 +1,8 @@
 from django.db import models
 
 from apps.abstracts.models import AbstractBaseModel
-
+from django.contrib.auth import get_user_model  
+User = get_user_model()
 
 
 # Movie genre (e.g., Action, Comedy)
@@ -66,19 +67,43 @@ class Showtime(models.Model):
     def __str__(self):
         return f"{self.movie.title} at {self.start_time.strftime('%Y-%m-%d')} in {self.hall.name}"
 
-# Booking of a show time by a user for a seat
-""" class Booking(models.Model):
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bookings')
-    show_time = models.ForeignKey(Showtime, on_delete=models.CASCADE, related_name='bookings')
-    seats = models.ForeignKey(Seat, on_delete=models.CASCADE, related_name='bookings')
+
+
+
+class Booking(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bookings')
+    showtime = models.ForeignKey(Showtime, on_delete=models.CASCADE, related_name='bookings')
+    seat = models.ForeignKey(Seat, on_delete=models.CASCADE, related_name='bookings')
+
     booking_time = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=50, choices=[
+    
+    status = models.CharField(
+        max_length=20,
+        choices=[
+            ('booked', 'Booked'),
+            ('canceled', 'Canceled'),
+        ],
+        default='booked'
+    )
+
+    class Meta:
+        unique_together = ('showtime', 'seat') 
+    def __str__(self):
+        return f"{self.user} — {self.showtime} — seat {self.seat}"
+class Payment(models.Model):
+    STATUS_CHOICES = [
         ('pending', 'Pending'),
-        ('confirmed', 'Confirmed'),
-        ('canceled', 'Canceled'),
-    ], default='pending')
+        ('paid', 'Paid'),
+        ('failed', 'Failed'),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='payments')
+    booking = models.OneToOneField(Booking, on_delete=models.CASCADE, related_name='payment')
+    amount = models.DecimalField(max_digits=8, decimal_places=2)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    payment_time = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Booking by {self.user_id.name} for {self.show_time.movie.title} at {self.show_time.start_time}"
-
- """
+        return f"Payment #{self.id} — {self.status} — {self.booking}"
