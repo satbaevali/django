@@ -5,214 +5,17 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
 from django.contrib.auth import login,logout
 from django.shortcuts import get_object_or_404
-from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiExample
 
 from .serializers import (
     RegisterSerializer,
     LoginSerializer,
     UserProfileSerializer,
     UserUpdateProfileSerializer,
-    ChangePasswordSerializer,
-    TokenRefreshResponseSerializer,
-    ErrorSerializer,
-    AuthResponseSerializer,
-    ValidationErrorSerializer,
-    MessageSerializer,
-    TokenVerifyResponseSerializer
+    ChangePasswordSerializer
 )
 
 from .models import CustomUser
 
-
-'''class RegisterView(ViewSet):
-    """Register View"""
-    permission_classes = [permissions.AllowAny]
-    def create(self,request):
-        serializer = RegisterSerializer(data = request.data)
-        if serializer.is_valid(raise_exception=True):
-            user = serializer.save()
-            
-            refresh = RefreshToken.for_user(user)
-            return Response({
-                'refresh':str(refresh),
-                'access':str(refresh.access_token)
-            },status=status.HTTP_201_CREATED)
-
-
-class LoginView(ViewSet):
-    serializer_class = LoginSerializer
-    permission_classes = [permissions.AllowAny]
-    
-    def create(self,request):
-        serializer = LoginSerializer(data = request.data,)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data['user']
-        
-        login(request,user)
-        refresh = RefreshToken.for_user(user)
-        
-        return Response({
-            'refresh':str(refresh),
-            'access':str(refresh.access_token),
-            'message':'Login succsefelly'
-        },status=status.HTTP_200_OK)
-        
-        
-class UserProfileView(ViewSet):
-    permission_classes = [permissions.IsAuthenticated]
-    def list(self,request):
-        users = CustomUser.objects.all()
-        serializer = UserProfileSerializer(users,many=True)
-        return Response(serializer.data,status=status.HTTP_202_ACCEPTED)
-    
-    def retrieve(self,request,pk=None):
-        user = CustomUser.objects.get(pk = pk)
-        serializer = UserProfileSerializer(user)
-        return Response(serializer.data)
-    
-'''
-@extend_schema_view(
-    register=extend_schema(
-        summary="User Registration",
-        description="Register a new user and returns JWT tokens (access and refresh)",
-        tags=['Authentication'],
-        request=RegisterSerializer,
-        responses={
-            201: AuthResponseSerializer,
-            400: ValidationErrorSerializer,
-        },
-        examples=[
-            OpenApiExample(
-                'Registration Request',
-                value={
-                    'email': 'user@example.com',
-                    'full_name': 'John Doe',
-                    'password': 'SecurePass123!',
-                    'password2': 'SecurePass123!'
-                },
-                request_only=True,
-                description="Example registration data"
-            ),
-            OpenApiExample(
-                'Successful Registration',
-                value={
-                    'message': 'Registration was successful',
-                    'user': {
-                        'id': 1,
-                        'full_name': 'John Doe',
-                        'email': 'user@example.com',
-                        'is_active': True,
-                        'created_at': '2024-12-01T10:00:00Z'
-                    },
-                    'tokens': {
-                        'refresh': 'eyJ0eXAiOiJKV1QiLCJh...',
-                        'access': 'eyJ0eXAiOiJKV1QiLCJh...'
-                    }
-                },
-                response_only=True,
-                status_codes=['201']
-            ),
-        ]
-    ),
-    login_user=extend_schema(
-        summary="User Login",
-        description="Authenticates user and returns JWT tokens",
-        tags=['Authentication'],
-        request=LoginSerializer,
-        responses={
-            200: AuthResponseSerializer,
-            400: ValidationErrorSerializer,
-            401: ErrorSerializer,
-        },
-        examples=[
-            OpenApiExample(
-                'Login Request',
-                value={
-                    'email': 'user@example.com',
-                    'password': 'SecurePass123!'
-                },
-                request_only=True
-            ),
-            OpenApiExample(
-                'Successful Login',
-                value={
-                    'message': 'Login was successful',
-                    'user': {
-                        'id': 1,
-                        'full_name': 'John Doe',
-                        'email': 'user@example.com',
-                        'is_active': True,
-                        'created_at': '2024-12-01T10:00:00Z'
-                    },
-                    'tokens': {
-                        'refresh': 'eyJ0eXAiOiJKV1QiLCJh...',
-                        'access': 'eyJ0eXAiOiJKV1QiLCJh...'
-                    }
-                },
-                response_only=True,
-                status_codes=['200']
-            ),
-        ]
-    ),
-    logout_user=extend_schema(
-        summary="User Logout",
-        description="Blacklists the refresh token and logs out the user",
-        tags=['Authentication'],
-        request={
-            'application/json': {
-                'type': 'object',
-                'properties': {
-                    'refresh': {'type': 'string', 'description': 'Refresh token to blacklist'}
-                },
-                'required': ['refresh'],
-                'example': {
-                    'refresh': 'eyJ0eXAiOiJKV1QiLCJh...'
-                }
-            }
-        },
-        responses={
-            200: MessageSerializer,
-            400: ErrorSerializer,
-        },
-        examples=[
-            OpenApiExample(
-                'Logout Request',
-                value={'refresh': 'eyJ0eXAiOiJKV1QiLCJh...'},
-                request_only=True
-            ),
-        ]
-    ),
-    refresh_token=extend_schema(
-        summary="Refresh Access Token",
-        description="Generate new access token using refresh token",
-        tags=['Authentication'],
-        request={
-            'application/json': {
-                'type': 'object',
-                'properties': {
-                    'refresh': {'type': 'string', 'description': 'Refresh token'}
-                },
-                'required': ['refresh'],
-                'example': {
-                    'refresh': 'eyJ0eXAiOiJKV1QiLCJh...'
-                }
-            }
-        },
-        responses={
-            200: TokenRefreshResponseSerializer,
-            401: ErrorSerializer,
-        },
-    ),
-    verify_token=extend_schema(
-        summary="Verify Token",
-        description="Check if the access token is valid",
-        tags=['Authentication'],
-        responses={
-            200: TokenVerifyResponseSerializer,
-            401: ErrorSerializer,
-        }
-    ),
-)
 
 class AuthViewSet(ViewSet):
     """Authentication ViewSet"""
@@ -262,6 +65,9 @@ class AuthViewSet(ViewSet):
                     'access':str(refresh.access_token)
                 }
             })
+        return Response({
+            'error':serializer.errors
+        }, status=status.HTTP_400_BAD_REQUEST)
     
     
     @action(detail=False, methods=['post'],url_path='logout', permission_classes = [permissions.IsAuthenticated])

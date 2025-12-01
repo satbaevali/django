@@ -82,12 +82,12 @@ from django.contrib import admin
 from django.utils.html import format_html
 from django.urls import reverse
 
-# Остальные модели оставляем без изменений
 
+# Payment model
 @admin.register(Payment)
 class PaymentAdmin(admin.ModelAdmin):
-    list_display = ("id", "booking", "amount", "status", "mark_paid", "payment_time")
-    list_filter = ("status", "payment_time")  # только поля модели
+    list_display = ("id", "booking", "amount", "status", "mark_paid", "created_at")
+    list_filter = ("status", "created_at") # filter by status and creation date
     search_fields = ("booking__user__username",)
 
     # Кнопка для ручной оплаты
@@ -97,13 +97,12 @@ class PaymentAdmin(admin.ModelAdmin):
                 '<a class="button" href="{}">Оплатить</a>',
                 reverse('admin:mark_payment_paid', args=[obj.id])
             )
-        return "Оплачено"
+        return "paid"
     
-    mark_paid.short_description = 'Действие'
+    mark_paid.short_description = 'Action'
 
-    # Автоматическое обновление статуса брони после оплаты
+    # Automatic update of booking status after payment
     def save_model(self, request, obj, form, change):
         if obj.status == 'paid' and obj.booking.status != 'booked':
-            obj.booking.status = 'booked'
             obj.booking.save()
         super().save_model(request, obj, form, change)
