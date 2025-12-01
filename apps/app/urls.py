@@ -10,5 +10,5 @@ router.register(r'cinemas', CinemaViewSet)
 router.register(r'showtimes', ShowtimeViewSet)
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path('v1/', include(router.urls)),
 ]

@@ -29,12 +29,14 @@ DJANGO_AND_THIRD_PARTY_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     "django_filters",
+    'rest_framework_simplejwt.token_blacklist',
+    'corsheaders',
+    'drf_spectacular',
     
     
 ]
 PROJECT_APPS = [
     "apps.app.apps.AppsConfig",
-    "users.apps.UsersConfig",
     "apps.abstracts.apps.AbstractsConfig",
     "apps.auths.apps.AuthsConfig"
     
@@ -69,29 +71,6 @@ TEMPLATES = [
         },
     },
 ]
-REST_FRAMEWORK = {
-
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-
-    ],
-
-}
-
-from datetime import timedelta
-SIMPLE_JWT = {
-
-    'ROTATE_REFRESH_TOKENS': True,
-
-    'BLACKLIST_AFTER_ROTATION': True,
-
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=30),
-
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=60),
-
-}
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -135,6 +114,3 @@ UNFOLD = {
         "show_all_applications": True,
     },
 }
-LOGIN_REDIRECT_URL = "users:home"
-LOGOUT_REDIRECT_URL = "users:login"
-LOGIN_URL = reverse_lazy("users:login")
