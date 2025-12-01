@@ -4,13 +4,7 @@ from apps.app.models import (
 )
 from apps.auths.models import CustomUser
 
-
-""" # Serialize app users
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = '__all__'
- """
+# -----------------------------
 # Serialize movie genres
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
@@ -58,16 +52,12 @@ class MovieSerializer(serializers.ModelSerializer):
         model = Movie
         fields = ['id', 'title', 'description', 'duration', 'language', 'rating', 'poster', 'genres', 'genre_ids']
 
-# -----------------------------
-# 2. SCHEDULE SERIALIZERS (Твоя часть)
-# -----------------------------
-
 class ShowtimeSerializer(serializers.ModelSerializer):
-    # READ: Полные объекты
+    # READ: Full objects
     hall = HallSerializer(read_only=True)
     movie = MovieSerializer(read_only=True)
     
-    # WRITE: Только IDы
+    # WRITE: Only IDs
     hall_id = serializers.PrimaryKeyRelatedField(
         queryset=Hall.objects.all(), source='hall', write_only=True
     )
@@ -83,7 +73,7 @@ class ShowtimeSerializer(serializers.ModelSerializer):
 
 
 class BookingSerializer(serializers.ModelSerializer):
-    # Принимаем список seat_id для бронирования
+    # Accept a list of seat_id for booking
     seats = serializers.PrimaryKeyRelatedField(
         queryset=Seat.objects.all(),
         many=True,
@@ -99,14 +89,14 @@ class BookingSerializer(serializers.ModelSerializer):
         showtime = attrs['showtime']
         seats = attrs['seats']
 
-        # 1) Проверяем, что все места принадлежат залу
+        # 1) Check that all seats belong to the hall
         for seat in seats:
             if seat.hall != showtime.hall:
                 raise serializers.ValidationError(
                     f"Seat {seat.id} does not belong to hall {showtime.hall.name}"
                 )
 
-        # 2) Проверяем, что места не заняты
+        # 2) Check if seats are already booked
         already_booked = Booking.objects.filter(
             showtime=showtime,
             seat__in=seats,
@@ -125,7 +115,7 @@ class BookingSerializer(serializers.ModelSerializer):
         showtime = validated_data['showtime']
         seats = validated_data.pop('seats')
 
-        # Создаём несколько записей Booking, по одной на каждое место
+        # Create multiple Booking records, one for each seat
         bookings = []
         for seat in seats:
             booking = Booking.objects.create(
@@ -140,5 +130,5 @@ class BookingSerializer(serializers.ModelSerializer):
 class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
-        fields = ['id', 'booking', 'amount', 'status', 'created_at', 'updated_at', 'payment_time']
+        fields = ['id', 'booking', 'amount', 'status', 'created_at', 'updated_at']
         read_only_fields = ['status', 'created_at', 'amount',]

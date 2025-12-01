@@ -32,6 +32,7 @@ DJANGO_AND_THIRD_PARTY_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
     'drf_spectacular',
+    'debug_toolbar',
     
     
 ]
@@ -47,6 +48,8 @@ INSTALLED_APPS = DJANGO_AND_THIRD_PARTY_APPS + PROJECT_APPS
 # Middleware | Templates | Validators
 #
 MIDDLEWARE = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -114,3 +117,7 @@ UNFOLD = {
         "show_all_applications": True,
     },
 }
+
+CORS_ALLOW_ALL_ORIGINS = True
+
+

@@ -21,6 +21,24 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
+# ----------------------------------------------
+# DRF Spectacular
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Kinopark API',
+    'DESCRIPTION': 'API для покупки билетов в кино',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    # Настройка авторизации (чтобы кнопка Authorize работала с JWT)
+    'COMPONENT_SPLIT_REQUEST': True,
+    'schemas': {
+        'jwt_auth': {
+            'type': 'http',
+            'scheme': 'bearer',
+            'bearerFormat': 'JWT',
+        },
+    },
+}
+
 
 # ----------------------------------------------
 # Simple JWT
@@ -67,3 +85,9 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainSlidingSerializer",
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
 }
+
+# ----------------------------------------------
+# Debug Toolbar
+INTERNAL_IPS = [
+    "127.0.0.1",
+]

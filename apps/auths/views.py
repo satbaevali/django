@@ -112,6 +112,9 @@ class AuthViewSet(ViewSet):
                     'access':str(refresh.access_token)
                 }
             })
+        return Response({
+            'error':serializer.errors
+        }, status=status.HTTP_400_BAD_REQUEST)
     
     
     @action(detail=False, methods=['post'],url_path='logout', permission_classes = [permissions.IsAuthenticated])
