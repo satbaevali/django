@@ -1,13 +1,18 @@
-
 from django.contrib import admin
 from django.urls import path,include
 from django.conf import settings
 from django.conf.urls.static import static
-from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
+from drf_spectacular.views import(
+    SpectacularAPIView,
+    SpectacularSwaggerView,
+    SpectacularRedocView
+)
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/',include('apps.auths.urls')),
-    path('api/v1/app', include('apps.app.urls')),
+    path('api/v1/apps/', include('apps.movies.urls')),
     # File (JSON/YAML)
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     # Beautiful UI (Swagger UI)

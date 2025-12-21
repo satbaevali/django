@@ -5,7 +5,15 @@ from django.core.management.base import BaseCommand
 from django.contrib.auth.hashers import make_password
 from django.db.models import QuerySet
 
-from apps.app.models import Genre, Cinema, Hall, Seat, Movie, Showtime, Booking
+from apps.movies.models import (
+    Genre,
+    Cinema,
+    Hall,
+    Seat,
+    Movie,
+    Showtime,
+    Booking
+)
 from apps.auths.models import CustomUser
 
 

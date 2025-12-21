@@ -37,7 +37,7 @@ DJANGO_AND_THIRD_PARTY_APPS = [
     
 ]
 PROJECT_APPS = [
-    "apps.app.apps.AppsConfig",
+    "apps.movies.apps.AppsConfig",
     "apps.abstracts.apps.AbstractsConfig",
     "apps.auths.apps.AuthsConfig"
     

@@ -42,7 +42,7 @@ from .serializers import (
     TokenVerifyResponseSerializer
 )
 from .models import CustomUser
-from auths.permissions import IsOwnerOrReadOnly
+#from auths.permissions import IsOwnerOrReadOnly
 
 
 
@@ -200,14 +200,11 @@ class AuthViewSet(ViewSet):
     def register(self,request):
         """Registration of the user"""
         
-        
         serializer = RegisterSerializer(data = request.data)
         
         if serializer.is_valid():
             user = serializer.save()
-
             refresh = RefreshToken.for_user(user)
-            
             return Response({
                 'message':'Registration was successful',
                 'user':UserProfileSerializer(user).data,
@@ -709,7 +706,7 @@ class UserViewSet(ViewSet):
     @action(detail=False, methods=['post'], url_path='change_password')
     def change_password(self,request):
         """Change user password"""
-        permissions_classes = IsOwnerOrReadOnly
+        #permissions_classes = IsOwnerOrReadOnly
         
         serializer = ChangePasswordSerializer(
             data = request.data,

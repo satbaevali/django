@@ -2,7 +2,6 @@ from django.contrib import admin
 from .models import  Genre, Cinema, Hall, Seat, Movie, Showtime,Booking,Payment
 from django.utils.html import format_html
 from django.urls import reverse
-from django.shortcuts import redirect
 from django.contrib import admin
 
 # Genre model

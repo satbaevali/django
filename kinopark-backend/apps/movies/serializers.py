@@ -1,6 +1,13 @@
 from rest_framework import serializers
-from apps.app.models import (
-    Genre, Cinema, Hall, Seat, Movie, Showtime,Booking, Payment
+from apps.movies.models import (
+    Genre, 
+    Cinema,
+    Hall,
+    Seat,
+    Movie,
+    Showtime,
+    Booking,
+    Payment
 )
 from apps.auths.models import CustomUser
 
@@ -54,10 +61,6 @@ class SeatSerializer(serializers.ModelSerializer):
 class MovieSerializer(serializers.ModelSerializer):
     # READ: List of genres with names
     genres = GenreSerializer(many=True, read_only=True)
-    # WRITE: List of genre IDs [1, 2, 5]
-    genre_ids = serializers.PrimaryKeyRelatedField(
-        queryset=Genre.objects.all(), source='genre', many=True, write_only=True
-    )
 
     class Meta:
         model = Movie

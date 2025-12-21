@@ -2,7 +2,7 @@ import random
 from datetime import timedelta
 from django.core.management.base import BaseCommand
 from django.utils import timezone
-from apps.app.models import Cinema, Hall, Seat, Genre, Movie, Showtime, Booking, Payment
+from apps.movies.models import Cinema, Hall, Seat, Genre, Movie, Showtime, Booking, Payment
 
 class Command(BaseCommand):
     help = 'Fill the database with real Kinopark data (Kazakhstan)'
