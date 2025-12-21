@@ -1,10 +1,10 @@
 #Python modules
 from typing import Any
 
+
 #Django modules
 from django.db.models import (
     CharField,
-    IntegerField,
     BooleanField,
     EmailField
 )
@@ -12,11 +12,14 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.models import AbstractBaseUser,PermissionsMixin,BaseUserManager
 from django.contrib.auth.password_validation import validate_password
 
+
 #Project modules
 from apps.abstracts.models import AbstractBaseModel
 
 
 class CustomUserManager(BaseUserManager):
+    """Custom user manager"""
+    
     def __obtain_user_instance(
         self,
         email:str,
@@ -61,6 +64,8 @@ class CustomUserManager(BaseUserManager):
         return new_user
     
     
+    #Create superuser
+    
     def create_superuser(
         self,
         email:str,
@@ -82,6 +87,8 @@ class CustomUserManager(BaseUserManager):
     
 
 class CustomUser(AbstractBaseUser,PermissionsMixin,AbstractBaseModel):
+    """Custom User model"""
+    
     email = EmailField (
         max_length=50,
         verbose_name="Email",
@@ -113,6 +120,8 @@ class CustomUser(AbstractBaseUser,PermissionsMixin,AbstractBaseModel):
     objects = CustomUserManager()
     
     class Meta:
+        """Customization of the Model metadata."""
+        
         verbose_name="CustomUser"
         verbose_name_plural = "Custom Users"
         ordering = ["-created_at"]

@@ -11,6 +11,10 @@ from django.contrib.auth.password_validation import validate_password
 
 
 class RegisterSerializer(ModelSerializer):
+    """
+    User Registration Serializer
+    """
+    
     password = CharField(
         write_only = True,
         required=True,
@@ -26,6 +30,11 @@ class RegisterSerializer(ModelSerializer):
     
     
     class Meta:
+        """
+        Customization of the Serializer metadata.
+        """
+          
+         
         model = CustomUser
         fields = [
             'email','full_name','password','password2'
@@ -44,6 +53,7 @@ class RegisterSerializer(ModelSerializer):
     
     
     def validate_full_name(self,value):
+        """Validation of the full name field."""
         if len(value.strip()) < 2:
             raise ValidationError('The full name must contain at least 2 characters')
         if not any(char.isalpha() for char in value):
@@ -52,6 +62,7 @@ class RegisterSerializer(ModelSerializer):
           
             
     def validate(self,attrs):
+        """Validate that the passwords match."""
         if attrs['password'] != attrs['password2']:
             raise ValidationError({
                 'password2':"Not correct"
@@ -60,6 +71,7 @@ class RegisterSerializer(ModelSerializer):
     
     
     def create(self, validated_data):
+        """Create a new user instance."""
         validated_data.pop('password2')
         user = CustomUser.objects.create_user(**validated_data)
         user.is_staff = True
@@ -68,14 +80,21 @@ class RegisterSerializer(ModelSerializer):
     
 
 class LoginSerializer(Serializer):
+    """
+    User Login Serializer
+    """
+    
+    
     email = EmailField()
     password = CharField(write_only = True)
     
     
     def validate_email(self,value):
+        """Validate email format."""
         return value.lower().strip()
     
     def validate(self,attrs):
+        """Validate user credentials."""
         email = attrs.get('email')
         password = attrs.get('password')
         
@@ -105,6 +124,9 @@ class LoginSerializer(Serializer):
 class UserProfileSerializer(ModelSerializer):
     
     class Meta:
+        """Customization of the Serializer metadata."""
+        
+          
         model = CustomUser
         fields = [
             'full_name','email','is_active','created_at'
@@ -115,11 +137,15 @@ class UserProfileSerializer(ModelSerializer):
 class UserUpdateProfileSerializer(ModelSerializer):
     
     class Meta:
+        """Customization of the Serializer metadata."""
+        
+        
         model = CustomUser
         fields = ['full_name']
         
     
     def validate_full_name(self,value):
+        """Validation of the full name field."""
         if len(value.strip()) < 2:
             raise ValidationError({
                 'detail':'The full name must contain at least 2 characters'
@@ -128,6 +154,11 @@ class UserUpdateProfileSerializer(ModelSerializer):
     
     
 class ChangePasswordSerializer(Serializer):
+    """
+    Serializer for changing user password.
+    """
+    
+    
     old_password =CharField(
         write_only = True,
         required = True
@@ -142,6 +173,7 @@ class ChangePasswordSerializer(Serializer):
     )
     
     def validate_old_password(self,value):
+        """Validate the old password."""
         user = self.context['request'].user
         
         if not user.check_password(value):
@@ -152,6 +184,7 @@ class ChangePasswordSerializer(Serializer):
     
     
     def validate_new_password(self,value):
+        """Validate that the new password is different from the old one."""
         user = self.context['request'].user
         
         if user.check_password(value):
@@ -162,6 +195,7 @@ class ChangePasswordSerializer(Serializer):
     
     
     def validate(self, attrs):
+        """Validate that the new passwords match."""
         if attrs['new_password'] != attrs['new_password2']:
             raise ValidationError({
                 'new_password2':"The new passwords don match"
