@@ -697,10 +697,7 @@ class UserViewSet(ViewSet):
         if serializer.is_valid():
             serializer.save()
             
-            return Response({
-                'message':"Updated user profile",
-                'result':UserProfileSerializer(request.user).data
-            },status=status.HTTP_201_CREATED)
+            return Response(serializer.data, status=status.HTTP_200_OK)
     
         
     @action(detail=False, methods=['post'], url_path='change_password')
@@ -712,9 +709,9 @@ class UserViewSet(ViewSet):
             data = request.data,
             context = {'request':request}
         )
-        if serializer.is_valid():
-            request.user.set_password(serializer.validated_data['new_password'])
-            request.user.save()
+        serializer.is_valid(raise_exception=True)
+        request.user.set_password(serializer.validated_data['new_password'])
+        request.user.save()
         
         refresh = RefreshToken.for_user(request.user)
         

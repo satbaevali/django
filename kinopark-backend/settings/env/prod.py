@@ -1,9 +1,8 @@
-# Project modules
-from kinopark.base import *
+from settings.base import *
 
 
-DEBUG = True
-ALLOWED_HOSTS = []
+DEBUG = False
+ALLOWED_HOSTS = ["*"]
 
 DATABASES = {
     'default': {

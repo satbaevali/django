@@ -10,7 +10,7 @@ from rest_framework.permissions import (
 )
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
-
+from rest_framework import status
 
 #Project modules
 from apps.movies.models import (
@@ -144,6 +144,13 @@ class BookingViewSet(ViewSet):
     """Booking viewset with user-specific data retrieval and filtering."""
     
     permission_classes = [IsAuthenticated]
+    serializer_class = BookingSerializer
+
+    def get_serializer(self, *args, **kwargs):
+        
+        serializer_class = self.serializer_class
+        kwargs.setdefault('context', {'request': self.request, 'view': self})
+        return serializer_class(*args, **kwargs)
     
     def list(self, request):
         """List bookings with filtering by showtime or user."""
@@ -168,27 +175,41 @@ class BookingViewSet(ViewSet):
     
     
     def get_queryset(self):
-        """Override get_queryset to filter bookings by showtime or user."""
-        if self.request.query_params.get('showtime'):
-            return Booking.objects.select_related('showtime', 'seat').all()
-        if self.request.user.is_authenticated:
-            return Booking.objects.filter(user=self.request.user).select_related('showtime', 'seat')
-        return Booking.objects.none()
+        """Filter bookings by showtime or user."""
+        queryset = Booking.objects.select_related('showtime', 'seat').all()
+        showtime = self.request.query_params.get('showtime')
+        user_id = self.request.query_params.get('user')
         
+        if showtime:
+            queryset = queryset.filter(showtime_id=showtime)
+        if user_id:
+            queryset = queryset.filter(user_id=user_id)
+        elif self.request.user.is_authenticated:
+            queryset = queryset.filter(user=self.request.user)
+            
+        return queryset
 
     def create(self, request, *args, **kwargs):
-        """Override create to return a list of all created bookings"""
-        
+        # Теперь self.get_serializer() сработает
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        bookings = serializer.save()
-        out_serializer = BookingSerializer(bookings, many=True)
-        return Response(out_serializer.data, status=HTTP_201_CREATED)
-    
+        booking = serializer.save()
+        
+  
+        if isinstance(booking, list):
+            return Response(BookingSerializer(booking, many=True).data, status=status.HTTP_201_CREATED)
+        return Response(BookingSerializer(booking).data, status=status.HTTP_201_CREATED)
     
 class PaymentViewSet(ViewSet):
     """Payment viewset with automatic booking status update after payment."""
     permission_classes = [IsAuthenticated]
+    
+    serializer_class = PaymentSerializer
+
+    def get_serializer(self, *args, **kwargs):
+        serializer_class = self.serializer_class
+        kwargs.setdefault('context', {'request': self.request, 'view': self})
+        return serializer_class(*args, **kwargs)
     
     def list(self, request):
         """List all payments."""
@@ -207,7 +228,7 @@ class PaymentViewSet(ViewSet):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        payment = serializer.save()
+        payment = serializer.save(user=request.user)
         
         """ Automatically update booking status after payment """
         payment.status = 'paid'

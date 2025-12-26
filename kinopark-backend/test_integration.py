@@ -10,8 +10,8 @@ django.setup()
 
 # --- 2. IMPORTS (Only after setting up django.setup!) ---
 from django.contrib.auth import get_user_model
-# Make sure the path 'apps.cinema.models' is correct. If the folder is 'apps/app', change to 'apps.app.models'
-from apps.app.models import Cinema, Hall, Seat, Genre, Movie, Showtime, Booking, Payment
+# Make sure the path 'apps.movies.models' is correct. If the folder is 'apps/app', change to 'apps.app.models'
+from apps.movies.models import Cinema, Hall, Seat, Genre, Movie, Showtime, Booking, Payment
 
 # Get the User model (this will be CustomUser from auths if configured in settings.py)
 User = get_user_model()

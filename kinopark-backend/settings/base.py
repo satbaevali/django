@@ -3,16 +3,16 @@ import os
 from django.urls import reverse_lazy
 
 # Project modules
-from kinopark.conf import *  # noqa: F403
+from settings.conf import *  # noqa: F403
 
 
 # ----------------------------------------------
 # Path
 #
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-ROOT_URLCONF = 'kinopark.urls'
-WSGI_APPLICATION = 'kinopark.wsgi.application'
-ASGI_APPLICATION = "kinopark.asgi.application"
+ROOT_URLCONF = 'settings.urls'
+WSGI_APPLICATION = 'settings.wsgi.application'
+ASGI_APPLICATION = "settings.asgi.application"
 AUTH_USER_MODEL = "auths.CustomUser"
 
 # ----------------------------------------------

@@ -61,7 +61,9 @@ class SeatSerializer(serializers.ModelSerializer):
 class MovieSerializer(serializers.ModelSerializer):
     # READ: List of genres with names
     genres = GenreSerializer(many=True, read_only=True)
-
+    genre_ids = serializers.PrimaryKeyRelatedField(
+        queryset=Genre.objects.all(), source='genres', many=True, write_only=True
+    )
     class Meta:
         model = Movie
         fields = [
@@ -165,7 +167,7 @@ class BookingSerializer(serializers.ModelSerializer):
             )
             bookings.append(booking)
 
-        return bookings
+        return bookings[0]
 class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
@@ -177,4 +179,4 @@ class PaymentSerializer(serializers.ModelSerializer):
             'created_at', 
             'updated_at'
         ]
-        read_only_fields = ['status', 'created_at', 'amount',]
+        read_only_fields = ['status', 'created_at',]
